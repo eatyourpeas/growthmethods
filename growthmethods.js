@@ -10,8 +10,8 @@ PLEASE NOTE THAT THE WHO-UK DATA HERE IS LICENSED TO THE MRC AND SHOULD NOT BE U
 
  */
 
-var moment = require('moment');
-var precise_moment = require('moment-precise-range');
+var moment = require('./moment');
+var precise_moment = require('./moment-precise-range');
 moment().format();
 
 
