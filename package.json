@@ -1,14 +1,14 @@
 {
   "name": "growthmethods",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "\"UK-WHO Growth Chart Node Module\"",
   "main": "growthmethods.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies" :
-  { "moment" : "2.10.3"
-  , "moment-precise-range" : "0.1.0"
+  "dependencies": {
+    "moment": "2.10.3",
+    "moment-precise-range": "0.1.0"
   },
   "repository": {
     "type": "git",
