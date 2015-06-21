@@ -1,0 +1,15 @@
+{
+  "name": "growthmethods",
+  "version": "1.0.0",
+  "description": "\"UK-WHO Growth Chart Node Module\"",
+  "main": "growthmethods.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "\"Growth",
+    "Chart\""
+  ],
+  "author": "\"Simon Chapman\"",
+  "license": "ISC"
+}
