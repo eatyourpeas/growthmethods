@@ -17,7 +17,7 @@ moment().format();
 
 
 ///this is the reference data
-    bp_decimalAges = [4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5, 17, 17.5, 18, 18.5, 19, 19.5, 20, 20.5, 21, 21.5, 22, 22.5, 23, 23.5, 24];
+    bp_decimalAges = [4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5, 19.0, 19.5, 20.0, 20.5, 21.0, 21.5, 22.0, 22.5, 23.0, 23.5, 24.0];
     boysBPSystolicL = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
     boysBPSystolicM = [102.1, 102.6, 103.2, 103.7, 104.3, 104.8, 105.4, 105.9, 106.4, 106.9, 107.5, 108.0, 108.6, 109.3, 110.0, 110.8, 111.7, 112.7, 113.9, 115.2, 116.6, 118.0, 119.4, 120.8, 122.1, 123.3, 124.5, 125.5, 126.4, 127.2, 127.9, 128.5, 129.0, 129.4, 129.8, 130.1, 130.4, 130.7, 130.9, 131.2, 131.4];
     boysBPSystolicS = [0.083, 0.083, 0.083, 0.083, 0.083, 0.083, 0.083, 0.084, 0.084, 0.084, 0.084, 0.084, 0.084, 0.084, 0.084, 0.084, 0.085, 0.085, 0.085, 0.085, 0.085, 0.086, 0.086, 0.086, 0.086, 0.087, 0.087, 0.087, 0.087, 0.087, 0.087, 0.088, 0.088, 0.088, 0.088, 0.088, 0.088, 0.088, 0.088, 0.088, 0.088];
@@ -124,10 +124,10 @@ exports.percentageMedianBMI = function( actualBMI,  decimalAge, isMale){
     else{
         oneBelow = findAgeIndexOneBelow(decimalAge);
         if (canUseCubicInterpolation(oneBelow)){
-            m = cubicInterpolation(actualBMI, decimalAge, oneBelow, mArray);
+            m = cubicInterpolation(actualBMI, decimalAge, oneBelow, mArray, decimalAges);
         }
         else {
-            m = linearInterpolation(actualBMI, decimalAge, oneBelow, mArray);
+            m = linearInterpolation(actualBMI, decimalAge, oneBelow, mArray, decimalAges);
         }
     }
 
@@ -236,11 +236,16 @@ exports.bpSDS = function(isSystolic, isMale, decimaleAge, bp_measurement ){
     m = getMatchedLMorSParameter(mArray, index);
     s = getMatchedLMorSParameter(sArray, index);
   } else {
-    oneBelow = findAgeIndexOneBelow(decimaleAge);
-    // we will only do linear interpolation for bp
-    l = bplinearInterpolation(bp_measurement,  decimalAge, oneBelow, lArray);
-    m = bplinearInterpolation(bp_measurement,  decimalAge, oneBelow, mArray);
-    s = bplinearInterpolation(bp_measurement,  decimalAge, oneBelow, sArray);
+    var oneBelow = findAgeIndexOneBelow(decimaleAge);
+    if (canUseCubicInterpolationForBP(oneBelow)) {
+      l = cubicInterpolation(bp_measurement, decimaleAge, oneBelow, lArray, bp_decimalAges);
+      m = cubicInterpolation(bp_measurement, decimaleAge, oneBelow, mArray, bp_decimalAges);
+      s = cubicInterpolation(bp_measurement, decimaleAge, oneBelow, sArray, bp_decimalAges);
+    } else {
+      l = linearInterpolation(bp_measurement, decimaleAge, oneBelow, lArray, bp_decimalAges);
+      m = linearInterpolation(bp_measurement, decimaleAge, oneBelow, mArray, bp_decimalAges);
+      s = linearInterpolation(bp_measurement, decimaleAge, oneBelow, sArray, bp_decimalAges);
+    }
   }
 
    // put the l, m & s values into the equation
@@ -251,9 +256,16 @@ exports.bpSDS = function(isSystolic, isMale, decimaleAge, bp_measurement ){
 
 }
 
-exports.measurementFromSDS = function( measurement,  requestedMeasureSDS,  actualMeasurement,  isMale,  decimalAge ){
+exports.measurementFromSDS = function( measurement,  requestedMeasureSDS,  actualMeasurement,  isMale,  decimalAge, isBP ){
 
-    var lms = getLMS(measurement, isMale, actualMeasurement, decimalAge);
+    var decimalAgeArrayToUse = [];
+    if (isBP) {
+      decimalAgeArrayToUse = bp_decimalAges;
+    } else {
+      decimalAgeArrayToUse = decimalAges;
+    }
+
+    var lms = getLMS(measurement, isMale, actualMeasurement, decimalAge, decimalAgeArrayToUse);
 
      var measurementValue = 0.0;
 
@@ -419,13 +431,13 @@ function getMatchedLMorSParameter( measurementArray, mDecimalAgeIndex){
     return l;
 }
 
-function getInterpolatedLMorSParameter( measuredValue,  decimalAge, measurement, lowerAgeIndex,  canCubicInterpolate){
-     interpolatedParameter = 0.0;
+function getInterpolatedLMorSParameter( measuredValue,  decimalAge, measurement, lowerAgeIndex,  canCubicInterpolate, decimalAgeArrayToUse){
+    var interpolatedParameter = 0.0;
     if (canCubicInterpolate){
-        interpolatedParameter = cubicInterpolation(measuredValue, decimalAge, lowerAgeIndex, measurement);
+        interpolatedParameter = cubicInterpolation(measuredValue, decimalAge, lowerAgeIndex, measurement, decimalAgeArrayToUse);
     }
     else {
-        interpolatedParameter = linearInterpolation(measuredValue, decimalAge, lowerAgeIndex, measurement);
+        interpolatedParameter = linearInterpolation(measuredValue, decimalAge, lowerAgeIndex, measurement, decimalAgeArrayToUse);
     }
 
     return interpolatedParameter;
@@ -492,13 +504,23 @@ function canUseCubicInterpolation(ageIndexBelow){
     return canUseCubicInterpolation;
 }
 
-function linearInterpolation( measuredValue,  decimalAge, ageIndexBelow, measurementArrayToUse){
+function canUseCubicInterpolationForBP(ageIndexBelow){
+  canUseCubicInterpolation = true;
+  if (ageIndexBelow == 0 || ageIndexBelow == 39) {
+    return canUseCubicInterpolation = false;
+  } else {
+    return canUseCubicInterpolation;
+  }
+
+}
+
+function linearInterpolation( measuredValue,  decimalAge, ageIndexBelow, measurementArrayToUse, decimalAgeArrayToUse){
      var linearInterpolatedValue = 0.0;
 
      var valueBelow = measurementArrayToUse[ageIndexBelow];
      var valueAbove = measurementArrayToUse[ageIndexBelow+1];
-     var ageBelow = decimalAges[ageIndexBelow];
-     var ageAbove = decimalAges[ageIndexBelow+1];
+     var ageBelow = decimalAgeArrayToUse[ageIndexBelow];
+     var ageAbove = decimalAgeArrayToUse[ageIndexBelow+1];
 
     linearInterpolatedValue = valueBelow + (((decimalAge - ageBelow)*valueAbove-valueBelow))/(ageAbove-ageBelow);
 
@@ -506,7 +528,7 @@ function linearInterpolation( measuredValue,  decimalAge, ageIndexBelow, measure
     return linearInterpolatedValue;
 }
 
-function cubicInterpolation( measuredValue,  decimalAge, ageIndexBelow, measurementArrayToUse){
+function cubicInterpolation( measuredValue,  decimalAge, ageIndexBelow, measurementArrayToUse, decimalAgeArrayToUse){
      var cubicInterpolatedValue = 0.0;
 
      var t = 0.0; //actual age
@@ -522,10 +544,10 @@ function cubicInterpolation( measuredValue,  decimalAge, ageIndexBelow, measurem
      var t13 = 0.0;
      var t23 = 0.0;
 
-     var ageTwoBelow = decimalAges[ageIndexBelow-1];
-     var ageOneBelow = decimalAges[ageIndexBelow];
-     var ageOneAbove = decimalAges[ageIndexBelow+1];
-     var ageTwoAbove = decimalAges[ageIndexBelow+2];
+     var ageTwoBelow = decimalAgeArrayToUse[ageIndexBelow-1];
+     var ageOneBelow = decimalAgeArrayToUse[ageIndexBelow];
+     var ageOneAbove = decimalAgeArrayToUse[ageIndexBelow+1];
+     var ageTwoAbove = decimalAgeArrayToUse[ageIndexBelow+2];
 
      var measurementTwoBelow = measurementArrayToUse[ageIndexBelow-1];
      var measurementOneBelow = measurementArrayToUse[ageIndexBelow];
@@ -561,13 +583,13 @@ function calculateSDS( myL,  myM,  myS,  myMeasurement){
     }
 
     else {
-        SDS = (Math.exp(myMeasurement / myM)/myS);
+        SDS = (Math.log(myMeasurement / myM)/myS);
     }
 
     return SDS;
 }
 
-function getLMS( measurement,  isMale,  actualMeasurement,  decimalAge){
+function getLMS( measurement,  isMale,  actualMeasurement,  decimalAge, decimalAgeArrayToUse){
 
      var lArray = getMeasurementParameter(measurement, isMale, "L");
      var mArray = getMeasurementParameter(measurement, isMale, "M");
@@ -586,14 +608,14 @@ function getLMS( measurement,  isMale,  actualMeasurement,  decimalAge){
     else{
         var oneBelow = findAgeIndexOneBelow(decimalAge);
         if (canUseCubicInterpolation(oneBelow)){
-            l = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, lArray);
-            m = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, mArray);
-            s = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, sArray);
+            l = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, lArray, decimalAgeArrayToUse);
+            m = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, mArray, decimalAgeArrayToUse);
+            s = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, sArray, decimalAgeArrayToUse);
         }
         else {
-            l = linearInterpolation(actualMeasurement, decimalAge, oneBelow, lArray);
-            m = linearInterpolation(actualMeasurement, decimalAge, oneBelow, mArray);
-            s = linearInterpolation(actualMeasurement, decimalAge, oneBelow, sArray);
+            l = linearInterpolation(actualMeasurement, decimalAge, oneBelow, lArray, decimalAgeArrayToUse);
+            m = linearInterpolation(actualMeasurement, decimalAge, oneBelow, mArray, decimalAgeArrayToUse);
+            s = linearInterpolation(actualMeasurement, decimalAge, oneBelow, sArray, decimalAgeArrayToUse);
         }
     }
 
@@ -643,18 +665,4 @@ function indexForMatchedBPDecimalAge( mDecimalAge){
         }
     }
     return mIndex;
-}
-
-function bplinearInterpolation( measuredValue,  decimalAge, ageIndexBelow, measurementArrayToUse){
-     var linearInterpolatedValue = 0.0;
-
-     var valueBelow = measurementArrayToUse[ageIndexBelow];
-     var valueAbove = measurementArrayToUse[ageIndexBelow+1];
-     var ageBelow = bp_decimalAges[ageIndexBelow];
-     var ageAbove = bp_decimalAges[ageIndexBelow+1];
-
-    linearInterpolatedValue = valueBelow + (((decimalAge - ageBelow)*valueAbove-valueBelow))/(ageAbove-ageBelow);
-
-
-    return linearInterpolatedValue;
 }
