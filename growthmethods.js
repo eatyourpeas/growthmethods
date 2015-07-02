@@ -156,14 +156,14 @@ exports.SDS = function(measurement,  decimalAge,  actualMeasurement, isMale){
     else{
         oneBelow = findAgeIndexOneBelow(decimalAge);
         if (canUseCubicInterpolation(oneBelow)){
-            l = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, lArray);
-            m = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, mArray);
-            s = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, sArray);
+            l = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, lArray, decimalAges);
+            m = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, mArray, decimalAges);
+            s = cubicInterpolation(actualMeasurement, decimalAge, oneBelow, sArray, decimalAges);
         }
         else {
-            l = linearInterpolation(actualMeasurement, decimalAge, oneBelow, lArray);
-            m = linearInterpolation(actualMeasurement, decimalAge, oneBelow, mArray);
-            s = linearInterpolation(actualMeasurement, decimalAge, oneBelow, sArray);
+            l = linearInterpolation(actualMeasurement, decimalAge, oneBelow, lArray, decimalAges);
+            m = linearInterpolation(actualMeasurement, decimalAge, oneBelow, mArray, decimalAges);
+            s = linearInterpolation(actualMeasurement, decimalAge, oneBelow, sArray, decimalAges);
         }
     }
 
@@ -229,14 +229,16 @@ exports.bpSDS = function(isSystolic, isMale, decimaleAge, bp_measurement ){
 
   var l, m, s = 0.0;
 
-  var ageMatched = findBPDecimalAge(decimalAge);
+  var ageMatched = findBPDecimalAge(decimaleAge);
+
   if (ageMatched) {
     var index = indexForMatchedBPDecimalAge(decimaleAge);
     l = getMatchedLMorSParameter(lArray, index);
     m = getMatchedLMorSParameter(mArray, index);
     s = getMatchedLMorSParameter(sArray, index);
   } else {
-    var oneBelow = findAgeIndexOneBelow(decimaleAge);
+    var oneBelow = findBPDecimalAgeIndexOneBelow(decimaleAge);
+
     if (canUseCubicInterpolationForBP(oneBelow)) {
       l = cubicInterpolation(bp_measurement, decimaleAge, oneBelow, lArray, bp_decimalAges);
       m = cubicInterpolation(bp_measurement, decimaleAge, oneBelow, mArray, bp_decimalAges);
@@ -258,7 +260,7 @@ exports.bpSDS = function(isSystolic, isMale, decimaleAge, bp_measurement ){
 
 exports.measurementFromSDS = function( measurement,  requestedMeasureSDS,  actualMeasurement,  isMale,  decimalAge, isBP ){
 
-    var decimalAgeArrayToUse = [];
+    var decimalAgeArrayToUse;
     if (isBP) {
       decimalAgeArrayToUse = bp_decimalAges;
     } else {
@@ -501,15 +503,15 @@ function canUseCubicInterpolation(ageIndexBelow){
         canUseCubicInterpolation = false;
         return canUseCubicInterpolation;
     }
-    return canUseCubicInterpolation;
+    return canUseCubicInterpolation = true;
 }
 
 function canUseCubicInterpolationForBP(ageIndexBelow){
-  canUseCubicInterpolation = true;
+  var canUseCubicInterpolation;
   if (ageIndexBelow == 0 || ageIndexBelow == 39) {
     return canUseCubicInterpolation = false;
   } else {
-    return canUseCubicInterpolation;
+    return canUseCubicInterpolation = true;
   }
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "growthmethods",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "\"UK-WHO Growth Chart Node Module\"",
   "main": "growthmethods.js",
   "scripts": {
