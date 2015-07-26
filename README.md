@@ -64,3 +64,5 @@ likelihood. Statistics in Medicine, 11:1305–1319.
 [http://www.cdc.gov/growthcharts/percentile_data_files.htm](http://www.cdc.gov/growthcharts/percentile_data_files.htm)
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">GrowthMethods</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">eatyourpeas</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>
+
+DISCLAIMER: NO LIABILITY IS ACCEPTED FOR THE ACCURACY OF THE METHODS IN THESE MODULES OR THE RESULTS THEY PRODUCE.
