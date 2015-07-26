@@ -11,7 +11,7 @@ PLEASE NOTE THAT THE WHO-UK DATA HERE IS LICENSED TO THE MRC AND SHOULD NOT BE U
  */
 
 var moment = require('moment');
-var precise_moment = require('moment-precise-range');
+var duration_moment = require('moment-duration-format');
 moment().format();
 
 
@@ -80,18 +80,19 @@ exports.decimalAgeFromDates = function(dateOfBirth, clinicDate){
 
 exports.chronologicalAgeFromDates = function(dateOfBirth, clinicDate){
 
-    chronologicalAgeToReturn = "";
-
     //check the dates are in order
-    var myDoB = precise_moment(dateOfBirth, "DD/MM/YYYY");
-    var myClinic = precise_moment(clinicDate, "DD/MM/YYYY");
+    //check the dates are in order
+    var myDoB = moment(dateOfBirth).startOf('day');
+    var myClinic = moment(clinicDate).startOf('day');
 
     if(myDoB.isAfter(myClinic)){
         //the date of birth is after the clinic date
         return "";
     }
 
-	chronologicalAgeToReturn = precise_moment.preciseDiff(myDoB, myClinic);
+    var numberOfDays = myClinic.diff(myDoB, 'days');
+
+	var chronologicalAgeToReturn = moment.duration(numberOfDays, "days").format("y [years], M [months], D [days]");
 
     return chronologicalAgeToReturn;
 
