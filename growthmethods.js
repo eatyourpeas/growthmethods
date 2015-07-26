@@ -213,7 +213,7 @@ exports.convertZScoreToCentile = function ( z){
 
 exports.bpSDS = function(isSystolic, isMale, decimaleAge, bp_measurement ){
   z = 0.0;
-  //NB AS ALL THE AGES ARE 0.5Y INTERVALS WE WILL USE LINEAR INTERPOLATION FOR ALL CALCULATIONS
+  
   //  REFERENCE DATA BEGINS AT 4 AND ENDS AT 24
   // select the LMS arrays
 
