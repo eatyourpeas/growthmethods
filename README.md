@@ -49,17 +49,28 @@ where measurement parameter: "weight", "height", "BMI", "BPSystolic", 			"BPDias
 
 ## Blood Pressure methods
 
-these are different as the reference data has different decimal age intervals
+There are different methods depending on which reference data is used. If using the the Jackson data, only an age and sex is required.
+If using the Fourth Report, age, sex and height centile are required. The height centile is calculated from the UK-WHO growth data.
 
-### calculate a BP SDS
+### calculate a BP SDS from the Jackson data.
+isSystolic, isMale are boolean.
 
-    bpSDS(isSystolic, isMale, decimaleAge, bp_measurement )
+    bpSDS(isSystolic, isMale, decimalAge, bp_measurement )
 
+### calculate a BP SDS using the Fourth report method.
+isSystolic and isMale are boolean, height_measurement is in cm.
+
+    BPZFromHeightAndDecimalAge(isSystolic, height_measurement, bp_measurement, decimal_age, isMale)
 
 ## References
 
 Cole TJ, Green PJ (1992). Smoothing reference centile curves: the LMS method and penalized
 likelihood. Statistics in Medicine, 11:1305–1319.
+
+The Fourth Report on the Diagnosis, Evaluation, and Treatment of High Blood Pressure in Children and Adolescents,
+PEDIATRICS Vol. 114 No. Supplement 2 August 1, 2004 pp. 555-576
+
+Jackson L V, Thalange N K S, Cole T J. Blood pressure centiles for Great Britain. Arch Dis Child 200792298–303.303
 
 [http://www.cdc.gov/growthcharts/percentile_data_files.htm](http://www.cdc.gov/growthcharts/percentile_data_files.htm)
 
