@@ -43,14 +43,15 @@ the measurement parameter accepts: "weight", "height", "BMI". isMale is boolean.
 	  SDS(measurement,  decimalAge,  actualMeasurement, isMale)
 
 ### convertZScoreToCentile(SDS)
-where measurement parameter: "weight", "height", "BMI", "BPSystolic", 			"BPDiastolic"
+where measurement parameter: "weight", "height", "BMI", "BPSystolic", "BPDiastolic"
 
-  	measurementFromSDS( measurement,  requestedMeasureSDS,  actualMeasurement,  	isMale,  decimalAge, isBP )
+  	measurementFromSDS(measurement, requestedMeasureSDS, actualMeasurement, isMale, decimalAge, isBP)
 
 ## Blood Pressure methods
 
-There are different methods depending on which reference data is used. If using the the Jackson data, only an age and sex is required.
-If using the Fourth Report, age, sex and height centile are required. The height centile is calculated from the UK-WHO growth data.
+There are different methods depending on which reference data is used. If using the the Jackson data, only an age and sex is required. The youngest age this can be used for is 4 years.
+
+If using the Fourth Report data, age, sex and height centile are required. The height centile is calculated from the UK-WHO growth data. The youngest age this can be used for is 1 year.
 
 ### calculate a BP SDS from the Jackson data.
 isSystolic, isMale are boolean.
@@ -60,7 +61,7 @@ isSystolic, isMale are boolean.
 ### calculate a BP SDS using the Fourth report method.
 isSystolic and isMale are boolean, height_measurement is in cm.
 
-    BPZFromHeightAndDecimalAge(isSystolic, height_measurement, bp_measurement, decimal_age, isMale)
+    BPZFromHeightSDSAndDecimalAgeAndSex = function (isSystolic, height_sds, bp_measurement, decimal_age, isMale)
 
 ## References
 
