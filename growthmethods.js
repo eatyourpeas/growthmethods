@@ -10,8 +10,8 @@ PLEASE NOTE THAT THE WHO-UK DATA HERE IS LICENSED TO THE MRC AND SHOULD NOT BE U
 
  */
 
-var moment = require('moment');
-var duration_moment = require('moment-duration-format');
+var moment = require("moment");
+require("moment-duration-format");
 moment().format();
 
 
@@ -267,7 +267,7 @@ exports.chronologicalAgeFromDates = function(dateOfBirth, clinicDate){
 
     var numberOfDays = myClinic.diff(myDoB, 'days');
 
-	var chronologicalAgeToReturn = moment.duration(numberOfDays, "days").format("y [years], M [months], D [days]");
+    var chronologicalAgeToReturn = moment.duration(numberOfDays, "days").format("y [years], M [months], D [day(s)]");
 
     return chronologicalAgeToReturn;
 
