@@ -9,7 +9,7 @@ PLEASE NOTE THAT THE WHO-UK DATA HERE IS LICENSED TO THE MRC AND SHOULD NOT BE U
 
 
  */
-
+var ztable = require('ztable');
 var moment = require("moment");
 require("moment-duration-format");
 moment().format();
@@ -271,6 +271,32 @@ exports.chronologicalAgeFromDates = function(dateOfBirth, clinicDate){
 
     return chronologicalAgeToReturn;
 
+}
+
+exports.correctedDecimalAgeFromDatesAndGestation = function(dateOfBirth, clinicDate, gestationWeeks, gestationSupplementaryDays){
+
+  var termPregnancyInDays = 40 * 7;
+  var lengthOfCurrentPregnancyInDays = ((gestationWeeks*7)+gestationSupplementaryDays);
+  var numberOfDaysPremature = termPregnancyInDays - lengthOfCurrentPregnancyInDays;
+
+
+  var decimalAgeToReturn = 0.0;
+  var numberOfDaysOldNow = 0.0;
+
+  //check the dates are in order
+  var myDoB = moment(dateOfBirth).startOf('day');
+  var myClinic = moment(clinicDate).startOf('day');
+
+  if(myDoB.isAfter(myClinic)){
+      //the date of birth is after the clinic date
+      return 0;
+  }
+
+
+  numberOfDaysOldNow = myClinic.diff(myDoB, 'days');
+
+  var correctedAge = (numberOfDaysOldNow - numberOfDaysPremature)/365.25;
+  return correctedAge;
 }
 
 
@@ -565,7 +591,7 @@ function SDS(measurement,  decimalAge,  actualMeasurement, isMale){
 
 function convertZScoreToCentile( z){
      var centile=0.0;
-
+/*
     //z == number of standard deviations from the mean
 
     //if z is greater than 6.5 standard deviations from the mean
@@ -597,8 +623,9 @@ function convertZScoreToCentile( z){
     }
 
     centile = sum * 100.0;
-
-    return centile;
+  */
+    centile = ztable(z);
+    return centile * 100;
 }
 
 function getMeasurementParameter(measurement, male, parameter){

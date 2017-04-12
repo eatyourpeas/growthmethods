@@ -19,6 +19,8 @@ The LMS parameters are the median (M), the generalized coefficient of variation 
 
   	decimalAgeFromDates(_dateOfBirth_, _clinicDate_)
 
+    correctedDecimalAgeFromDatesAndGestation(dateOfBirth, clinicDate, gestationWeeks, gestationSupplementaryDays)
+
 ### calculate a chronological age
 
   	chronologicalAgeFromDates(dateOfBirth, clinicDate)
