@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "moment": "2.10.3",
+    "moment": "^2.30.1",
     "moment-duration-format": "1.3.0",
     "ztable": "1.0.7"
   },
